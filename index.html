@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Splits</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#131418;-webkit-font-smoothing:antialiased}
+a{color:inherit}a:hover{color:oklch(0.82 0.1 75)}
+input,select,button,textarea{font-family:inherit}
+input::placeholder{color:currentColor;opacity:.45}
+input:focus,select:focus{outline:1.5px solid oklch(0.75 0.1 65);outline-offset:1px}
+input[type=number]::-webkit-inner-spin-button{opacity:.35}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:rgba(128,128,128,.28);border-radius:10px}::-webkit-scrollbar-track{background:transparent}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<template id="dc-template">
+<div style="--bg:#131418;--glow1:oklch(0.3 0.035 65);--glow2:oklch(0.25 0.03 250);--fg:#ECE7DE;--mute:rgba(236,231,222,.58);--card:rgba(255,255,255,.035);--cardB:rgba(255,255,255,.07);--line:rgba(255,255,255,.07);--ctl:rgba(255,255,255,.06);--ctlB:rgba(255,255,255,.14);--input:rgba(255,255,255,.05);--select:#1F2025;--track:rgba(255,255,255,.08);--heatMiss:rgba(236,231,222,.22);--past:rgba(236,231,222,.72);--acc:oklch(0.82 0.1 75);--onAcc:#1A1712;--miss:oklch(0.72 0.13 30);--rowOn:rgba(233,201,140,.07);--heroBg:linear-gradient(135deg, rgba(233,201,140,.10), rgba(255,255,255,.03) 55%);--heroB:rgba(255,255,255,.08);--heroFg:#ECE7DE;--heroMute:rgba(236,231,222,.58);--heroAcc:oklch(0.82 0.1 75);--heroTrack:rgba(255,255,255,.08);--navOnBg:rgba(255,255,255,.08);--navOnFg:#ECE7DE;--navDot:oklch(0.82 0.1 75);--strong:#ECE7DE;--onStrong:#131418">
+<div style="{{ themeVars }}">
+<div style="display:flex;height:100vh;color:var(--fg);font-family:Archivo,sans-serif;background:radial-gradient(1000px 560px at 85% -15%, var(--glow1) 0%, transparent 65%), radial-gradient(800px 560px at -5% 115%, var(--glow2) 0%, transparent 60%), var(--bg);transition:background .3s">
+
+<aside style="width:228px;flex:none;display:flex;flex-direction:column;padding:28px 18px 22px;gap:32px;border-right:1px solid var(--line)">
+<div style="display:flex;align-items:center;gap:12px;padding:0 10px">
+<svg width="30" height="30" viewBox="0 0 28 28"><polygon points="1,27 1,21 7,21 7,15 13,15 13,9 19,9 19,3 27,3 27,27" style="fill:var(--fg)"></polygon><rect x="1" y="21" width="6" height="2" style="fill:var(--acc)"></rect><rect x="7" y="15" width="6" height="2" style="fill:var(--acc)"></rect><rect x="13" y="9" width="6" height="2" style="fill:var(--acc)"></rect><rect x="19" y="3" width="8" height="2" style="fill:var(--acc)"></rect></svg>
+<div style="font-family:Archivo;font-stretch:125%;font-weight:500;font-size:19px;letter-spacing:.06em">SPLITS</div>
+</div>
+<nav style="display:flex;flex-direction:column;gap:4px">
+<sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
+<button onClick="{{ n.onClick }}" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border:0;border-radius:999px;background:{{ n.bg }};color:{{ n.fg }};font-size:14px;font-weight:{{ n.weight }};text-align:left;cursor:pointer;transition:background .2s"><span style="width:6px;height:6px;border-radius:50%;background:{{ n.dot }}"></span>{{ n.label }}</button>
+</sc-for>
+</nav>
+<div style="margin-top:auto;display:flex;flex-direction:column;gap:12px">
+<div style="padding:16px;border-radius:18px;background:var(--card);border:1px solid var(--cardB);display:flex;flex-direction:column;gap:6px">
+<div style="font-size:11px;letter-spacing:.12em;color:var(--mute)">CONSISTENCY · 30D</div>
+<div style="font-family:Archivo;font-stretch:125%;font-weight:300;font-size:34px;line-height:1">{{ consistency30 }}<span style="font-size:16px;color:var(--mute)">{{ consistencyUnit }}</span></div>
+<div style="display:flex;align-items:flex-end;gap:3px;height:26px;margin-top:4px"><sc-for list="{{ spark }}" as="s" hint-placeholder-count="14"><div title="{{ s.title }}" style="flex:1;height:{{ s.h }};min-height:2px;border-radius:2px;background:{{ s.bg }}"></div></sc-for></div>
+</div>
+<button onClick="{{ toggleTheme }}" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:999px;border:1px solid var(--ctlB);background:var(--ctl);color:var(--fg);font-size:13px;cursor:pointer"><span>Light mode</span><span style="position:relative;width:34px;height:18px;border-radius:999px;background:{{ switchBg }};transition:background .2s"><span style="position:absolute;top:2px;left:{{ knobLeft }};width:14px;height:14px;border-radius:50%;background:{{ knobBg }};transition:left .2s"></span></span></button>
+</div>
+</aside>
+
+<main style="flex:1;min-width:0;overflow:auto">
+<div style="max-width:1240px;margin:0 auto;padding:28px 32px 56px;display:flex;flex-direction:column;gap:20px">
+
+<sc-if value="{{ isToday }}" hint-placeholder-val="{{ true }}">
+<header style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;color:var(--mute)">{{ dateLine }}</div><div style="font-family:Archivo;font-stretch:125%;font-weight:400;font-size:38px;letter-spacing:-.01em;line-height:1">{{ vdLabel }}</div></div>
+<div style="display:flex;align-items:center;gap:14px">
+<div style="font-size:13px;color:var(--mute)">{{ leftText }}</div>
+<div style="display:flex;gap:4px">
+<button onClick="{{ onPrevDay }}" title="Previous day" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--ctlB);background:var(--ctl);color:var(--fg);font-size:16px;cursor:pointer">‹</button>
+<sc-if value="{{ notToday }}"><button onClick="{{ onToday }}" style="height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--ctlB);background:var(--ctl);color:var(--fg);font-size:13px;cursor:pointer">Today</button></sc-if>
+<button onClick="{{ onNextDay }}" title="Next day" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--ctlB);background:var(--ctl);color:var(--fg);font-size:16px;cursor:pointer;opacity:{{ nextOpacity }}">›</button>
+</div>
+</div>
+</header>
+<div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+<div style="flex:1 1 640px;min-width:0;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:center;gap:32px;padding:20px 28px;border-radius:24px;background:var(--heroBg);border:1px solid var(--heroB);color:var(--heroFg)">
+<div style="position:relative;width:124px;height:124px;flex:none">
+<svg width="124" height="124" viewBox="0 0 168 168" style="transform:rotate(-90deg)"><circle cx="84" cy="84" r="74" style="fill:none;stroke:var(--heroTrack);stroke-width:9"></circle><circle cx="84" cy="84" r="74" style="fill:none;stroke:var(--heroAcc);stroke-width:9;stroke-linecap:round;stroke-dasharray:{{ scoreDash }};opacity:{{ scoreOp }};transition:stroke-dasharray .5s"></circle></svg>
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><div style="font-family:Archivo;font-stretch:125%;font-weight:300;font-size:40px;line-height:1">{{ doneCount }}</div><div style="font-size:11px;letter-spacing:.12em;color:var(--heroMute)">OF 7</div></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px;flex:1">
+<div style="font-size:11px;letter-spacing:.14em;color:var(--heroMute)">DAILY SCORE</div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px">
+<div style="display:flex;flex-direction:column;gap:6px"><div style="font-family:Archivo;font-stretch:125%;font-weight:300;font-size:30px;line-height:1">{{ liveStreaks }}</div><div style="font-size:12px;color:var(--heroMute)">Live streaks</div></div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="font-family:Archivo;font-stretch:125%;font-weight:300;font-size:30px;line-height:1">{{ topStreak }}<span style="font-size:14px;color:var(--heroMute)"> d</span></div><div style="font-size:12px;color:var(--heroMute)">Longest active</div></div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="font-family:Archivo;font-stretch:125%;font-weight:300;font-size:30px;line-height:1;color:var(--heroAcc)">{{ prsOnLine }}</div><div style="font-size:12px;color:var(--heroMute)">PRs on the line</div></div>
+</div>
+</div>
+</div>
+<div style="padding:10px;border-radius:24px;background:var(--card);border:1px solid var(--cardB);display:flex;flex-direction:column;gap:2px">
+<sc-for list="{{ habits }}" as="h" hint-placeholder-count="7">
+<div style="display:grid;grid-template-columns:46px minmax(0,1fr) 104px 56px 156px;gap:12px;align-items:center;padding:6px 12px;border-radius:16px;background:{{ h.rowBg }};transition:background .2s">
+<div title="{{ h.ringTitle }}" style="position:relative;width:46px;height:46px"><svg width="46" height="46" viewBox="0 0 48 48" style="transform:rotate(-90deg)"><circle cx="24" cy="24" r="20" style="fill:none;stroke:var(--track);stroke-width:3.5"></circle><circle cx="24" cy="24" r="20" style="fill:none;stroke:{{ h.ring }};stroke-width:3.5;stroke-linecap:round;stroke-dasharray:{{ h.dash }};opacity:{{ h.ringOp }};transition:all .4s"></circle></svg><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ h.cur }}</div></div>
+<div style="display:flex;flex-direction:column;gap:3px;min-width:0"><div style="font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ h.name }}</div><div style="font-size:12px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ h.sub }}</div></div>
+<div style="display:flex;gap:5px"><sc-for list="{{ h.days }}" as="x"><div title="{{ x.title }}" style="width:11px;height:11px;border-radius:50%;box-sizing:border-box;background:{{ x.bg }};border:1.5px solid {{ x.border }}"></div></sc-for></div>
+<div style="font-size:11px;letter-spacing:.06em;font-weight:600;color:{{ h.prFg }}">{{ h.prLabel }}</div>
+<div style="display:flex;justify-content:flex-end;align-items:center;gap:8px">
+<sc-if value="{{ h.isToggle }}" hint-placeholder-val="{{ true }}"><span style="font-size:12px;color:var(--mute);white-space:nowrap">{{ h.weekLabel }}</span><button onClick="{{ h.onToggle }}" style="min-width:80px;height:36px;padding:0 14px;white-space:nowrap;border-radius:999px;border:1px solid {{ h.btnBorder }};background:{{ h.btnBg }};color:{{ h.btnFg }};font-size:13px;font-weight:600;cursor:pointer;transition:all .2s">{{ h.btnLabel }}</button></sc-if>
+<sc-if value="{{ h.isSleep }}"><input type="number" step="0.1" min="0" max="16" placeholder="0.0" value="{{ sleepRaw }}" onChange="{{ onSleep }}" style="width:80px;height:36px;box-sizing:border-box;padding:0 12px;border-radius:999px;border:1px solid {{ h.inBorder }};background:{{ h.inBg }};color:{{ h.inFg }};font-size:15px;font-weight:600;text-align:center"><span style="font-size:12px;color:var(--mute)">hrs</span></sc-if>
+<sc-if value="{{ h.isNet }}"><span style="font-size:12px;color:var(--mute);white-space:nowrap">{{ h.netCount }}</span><button onClick="{{ toggleNetForm }}" style="height:36px;padding:0 14px;white-space:nowrap;border-radius:999px;border:1px solid {{ h.btnBorder }};background:{{ h.btnBg }};color:{{ h.btnFg }};font-size:13px;font-weight:600;cursor:pointer">+ Outreach</button></sc-if>
+</div>
+</div>
+<sc-if value="{{ h.showNetForm }}">
+<div style="display:flex;flex-direction:column;gap:8px;padding:4px 12px 12px 70px">
+<sc-for list="{{ outreachToday }}" as="o"><div style="font-size:13px;display:flex;gap:10px"><span style="color:var(--acc)">✓</span><span>{{ o.name }}</span><span style="color:var(--mute)">{{ o.company }}</span></div></sc-for>
+<div style="display:flex;gap:8px"><input placeholder="Contact name" value="{{ netName }}" onChange="{{ onNetName }}" onKeyDown="{{ onNetKey }}" style="flex:1;min-width:0;height:36px;padding:0 14px;border-radius:999px;font-size:13px;border:1px solid var(--ctlB);background:var(--input);color:var(--fg)"><input placeholder="Company" value="{{ netCo }}" onChange="{{ onNetCo }}" onKeyDown="{{ onNetKey }}" style="flex:1;min-width:0;height:36px;padding:0 14px;border-radius:999px;font-size:13px;border:1px solid var(--ctlB);background:var(--input);color:var(--fg)"><button onClick="{{ onAddOutreach }}" style="height:36px;padding:0 18px;border-radius:999px;border:0;background:var(--strong);color:var(--onStrong);font-size:13px;font-weight:600;cursor:pointer">Log</button></div>
+<div style="font-size:12px;color:var(--mute)">Saved to Networking as "Reached out".</div>
+</div>
+</sc-if>
+</sc-for>
+</div>
+</div>
+<div style="flex:1 1 300px;max-width:100%;border-radius:24px;background:var(--card);border:1px solid var(--cardB);display:flex;flex-direction:column;overflow:hidden">
+<div style="padding:22px 22px 14px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font-family:Archivo;font-stretch:125%;font-weight:400;font-size:20px">Tasks</div><div style="font-size:13px;color:var(--mute)">{{ taskDone }} of {{ taskTotal }}</div></div>
+<div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ filters }}" as="f" hint-placeholder-count="5"><button onClick="{{ f.onClick }}" style="display:flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;border:1px solid {{ f.border }};background:{{ f.bg }};color:{{ f.fg }};font-size:12px;font-weight:500;cursor:pointer"><span style="width:6px;height:6px;border-radius:50%;background:{{ f.color }}"></span>{{ f.label }} <span style="opacity:.6">{{ f.count }}</span></button></sc-for></div>
+</div>
+<div style="display:flex;flex-direction:column;padding:0 10px">
+<sc-for list="{{ visibleTasks }}" as="t" hint-placeholder-count="3">
+<div style="display:flex;align-items:flex-start;gap:12px;padding:11px 12px;border-top:1px solid var(--line)">
+<button onClick="{{ t.onToggle }}" style="width:20px;height:20px;flex:none;border-radius:50%;border:1.5px solid {{ t.boxBorder }};background:{{ t.box }};color:var(--onAcc);font-size:11px;font-weight:700;line-height:1;padding:0;cursor:pointer">{{ t.mark }}</button>
+<div style="flex:1;display:flex;flex-direction:column;gap:4px;min-width:0"><div style="font-size:14px;color:{{ t.fg }};text-decoration:{{ t.deco }};text-wrap:pretty">{{ t.text }}</div><div style="display:flex;align-items:center;gap:6px;font-size:10px;letter-spacing:.12em;color:var(--mute)"><span style="width:6px;height:6px;border-radius:50%;background:{{ t.color }}"></span>{{ t.tagLabel }}</div></div>
+<button onClick="{{ t.onRemove }}" title="Delete" style="border:0;background:none;color:var(--mute);font-size:16px;cursor:pointer;padding:0 2px">×</button>
+</div>
+</sc-for>
+<sc-if value="{{ tasksEmpty }}"><div style="padding:22px 12px;border-top:1px solid var(--line);font-size:13px;color:var(--mute)">Nothing here yet. Add what today needs.</div></sc-if>
+</div>
+<div style="display:flex;gap:6px;padding:14px;margin-top:4px;border-top:1px solid var(--line)">
+<input placeholder="Add a task…" value="{{ newText }}" onChange="{{ onNewText }}" onKeyDown="{{ onNewKey }}" style="flex:1;min-width:0;height:36px;padding:0 14px;border-radius:999px;font-size:13px;border:1px solid var(--ctlB);background:var(--input);color:var(--fg)">
+<select value="{{ newTag }}" onChange="{{ onNewTag }}" style="height:36px;padding:0 10px;border-radius:999px;font-size:12px;border:1px solid var(--ctlB);background:var(--select);color:var(--fg)"><option value="work">Work</option><option value="school">School</option><option value="personal">Personal</option><option value="other">Other</option></select>
+<button onClick="{{ onAddTask }}" title="Add task" style="width:36px;height:36px;flex:none;border-radius:50%;border:0;background:var(--acc);color:var(--onAcc);font-size:18px;cursor:pointer">+</button>
+</div>
+<sc-if value="{{ hasCompleted }}"><button onClick="{{ onClearDone }}" style="margin:0 14px 14px;align-self:flex-start;border:0;background:none;color:var(--mute);font-size:12px;cursor:pointer;padding:0">Clear completed</button></sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isTrends }}">
+<header style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;color:var(--mute)">Last 52 weeks</div><div style="font-family:Archivo;font-stretch:125%;font-weight:400;font-size:38px;letter-spacing:-.01em;line-height:1">Trends</div></header>
+<div style="padding:22px 24px;border-radius:24px;background:var(--heroBg);border:1px solid var(--heroB);color:var(--heroFg);display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font-size:11px;letter-spacing:.14em;color:var(--heroMute)">SCOREBOARD · CURRENT STREAK / PR</div><div style="font-size:12px;color:var(--heroMute)">Workout counts weeks with 5+ sessions</div></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px">
+<sc-for list="{{ board }}" as="b" hint-placeholder-count="7">
+<div style="padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;gap:10px">
+<div style="font-size:12px;color:var(--heroMute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ b.name }}</div>
+<div style="display:flex;align-items:baseline;gap:4px"><div style="font-family:Archivo;font-stretch:125%;font-weight:300;font-size:40px;line-height:.9;font-variant-numeric:tabular-nums">{{ b.cur }}</div><div style="font-size:12px;color:var(--heroMute)">{{ b.unit }}</div></div>
+<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:.06em;font-weight:600"><span style="color:{{ b.prFg }}">{{ b.prLabel }}</span><span style="color:var(--heroMute);font-weight:400">{{ b.prUnit }}</span></div>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px">
+<sc-for list="{{ charts }}" as="c" hint-placeholder-count="3">
+<div style="padding:20px 20px 16px;border-radius:24px;background:var(--card);border:1px solid var(--cardB);display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="display:flex;flex-direction:column;gap:4px"><div style="font-size:15px;font-weight:500">{{ c.title }}</div><div style="font-size:12px;color:var(--mute)">{{ c.sub }}</div></div><div style="font-family:Archivo;font-stretch:125%;font-weight:300;font-size:28px;line-height:1">{{ c.latest }}</div></div>
+<svg viewBox="0 0 320 120" style="width:100%;height:auto;display:block">
+<line x1="12" x2="308" y1="{{ c.targetY }}" y2="{{ c.targetY }}" style="stroke:var(--mute);stroke-width:1;stroke-dasharray:3 4"></line>
+<line x1="12" x2="308" y1="108" y2="108" style="stroke:var(--line);stroke-width:1"></line>
+<polyline points="{{ c.points }}" style="fill:none;stroke:var(--acc);stroke-width:2;stroke-linejoin:round;stroke-linecap:round"></polyline>
+<sc-for list="{{ c.dots }}" as="p"><circle cx="{{ p.cx }}" cy="{{ p.cy }}" r="3.2" style="fill:var(--bg);stroke:var(--acc);stroke-width:2"></circle></sc-for>
+</svg>
+<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--mute)"><span>{{ weekAxisStart }}</span><span>{{ c.targetLabel }}</span><span>This week</span></div>
+</div>
+</sc-for>
+</div>
+<div style="padding:22px 24px;border-radius:24px;background:var(--card);border:1px solid var(--cardB);display:flex;flex-direction:column;gap:18px">
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:4px"><div style="font-size:15px;font-weight:500">Consistency score</div><div style="font-size:12px;color:var(--mute)">Share of all 7 habits completed, by week</div></div>
+<div style="display:flex;gap:28px">
+<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><div style="font-family:Archivo;font-stretch:125%;font-weight:300;font-size:30px;line-height:1">{{ thisWeekScore }}</div><div style="font-size:12px;color:var(--mute)">This week</div></div>
+<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><div style="font-family:Archivo;font-stretch:125%;font-weight:300;font-size:30px;line-height:1">{{ consistency30 }}{{ consistencyUnit }}</div><div style="font-size:12px;color:var(--mute)">30 days</div></div>
+<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><div style="font-family:Archivo;font-stretch:125%;font-weight:300;font-size:30px;line-height:1;color:var(--acc)">{{ bestWeek }}</div><div style="font-size:12px;color:var(--mute)">Best week</div></div>
+</div>
+</div>
+<div style="display:flex;align-items:flex-end;gap:6px;height:140px">
+<sc-for list="{{ consistBars }}" as="cb" hint-placeholder-count="26">
+<div title="{{ cb.title }}" style="flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;align-items:center"><div style="font-size:10px;color:var(--mute)">{{ cb.label }}</div><div style="width:100%;height:{{ cb.h }};min-height:3px;border-radius:6px;background:{{ cb.bg }};transition:height .4s"></div></div>
+</sc-for>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--mute)"><span>{{ consistAxisStart }}</span><span>This week</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<sc-for list="{{ heat }}" as="hm" hint-placeholder-count="7">
+<div style="padding:18px 22px;border-radius:24px;background:var(--card);border:1px solid var(--cardB);display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap"><div style="font-size:15px;font-weight:500">{{ hm.name }}</div><div style="display:flex;gap:18px;font-size:12px;color:var(--mute)"><span>{{ hm.total }}</span><span>{{ hm.streaks }}</span></div></div>
+<div style="overflow-x:auto;padding-bottom:4px">
+<div style="display:inline-flex;flex-direction:column;gap:5px">
+<div style="display:flex;gap:3px"><sc-for list="{{ heatMonths }}" as="m"><div style="width:11px;flex:none;font-size:10px;color:var(--mute);white-space:nowrap;overflow:visible">{{ m.label }}</div></sc-for></div>
+<div style="display:flex;gap:3px"><sc-for list="{{ hm.cols }}" as="col"><div style="display:flex;flex-direction:column;gap:3px"><sc-for list="{{ col.cells }}" as="c"><div title="{{ c.title }}" style="width:11px;height:11px;border-radius:3px;background:{{ c.bg }}"></div></sc-for></div></sc-for></div>
+</div>
+</div>
+</div>
+</sc-for>
+<div style="display:flex;gap:16px;font-size:12px;color:var(--mute);padding:0 6px"><span style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;border-radius:3px;background:var(--acc)"></span>Success</span><span style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;border-radius:3px;background:var(--heatMiss)"></span>Logged, under target</span><span style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;border-radius:3px;background:var(--track)"></span>No success</span></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isNet }}">
+<header style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;color:var(--mute)">Every outreach counts toward your Networking streak</div><div style="font-family:Archivo;font-stretch:125%;font-weight:400;font-size:38px;letter-spacing:-.01em;line-height:1">Networking</div></div>
+<div style="display:flex;gap:28px">
+<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><div style="font-family:Archivo;font-stretch:125%;font-weight:300;font-size:30px;line-height:1">{{ netTotal }}</div><div style="font-size:12px;color:var(--mute)">Contacts</div></div>
+<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><div style="font-family:Archivo;font-stretch:125%;font-weight:300;font-size:30px;line-height:1">{{ netChatted }}</div><div style="font-size:12px;color:var(--mute)">Chatted</div></div>
+<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><div style="font-family:Archivo;font-stretch:125%;font-weight:300;font-size:30px;line-height:1">{{ netWeek }}</div><div style="font-size:12px;color:var(--mute)">This week</div></div>
+<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><div style="font-family:Archivo;font-stretch:125%;font-weight:300;font-size:30px;line-height:1;color:var(--acc)">{{ netStreak }}</div><div style="font-size:12px;color:var(--mute)">Day streak</div></div>
+</div>
+</header>
+<div style="padding:18px;border-radius:24px;background:var(--heroBg);border:1px solid var(--heroB);display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+<input placeholder="Name" value="{{ cName }}" onChange="{{ onCName }}" onKeyDown="{{ onCKey }}" style="flex:1 1 180px;height:38px;padding:0 14px;border-radius:999px;font-size:13px;border:1px solid var(--ctlB);background:var(--input);color:var(--fg);min-width:0">
+<input placeholder="Company" value="{{ cCo }}" onChange="{{ onCCo }}" onKeyDown="{{ onCKey }}" style="flex:1 1 160px;height:38px;padding:0 14px;border-radius:999px;font-size:13px;border:1px solid var(--ctlB);background:var(--input);color:var(--fg);min-width:0">
+<input type="date" value="{{ cDate }}" onChange="{{ onCDate }}" style="flex:0 0 150px;height:38px;padding:0 12px;border-radius:999px;font-size:13px;border:1px solid var(--ctlB);background:var(--input);color:var(--fg);min-width:0">
+<select value="{{ cStatus }}" onChange="{{ onCStatus }}" style="flex:0 0 140px;height:38px;padding:0 12px;border-radius:999px;font-size:13px;border:1px solid var(--ctlB);background:var(--select);color:var(--fg)"><option value="reached">Reached out</option><option value="chatted">Chatted</option></select>
+<input placeholder="Notes" value="{{ cNotes }}" onChange="{{ onCNotes }}" onKeyDown="{{ onCKey }}" style="flex:2 1 240px;height:38px;padding:0 14px;border-radius:999px;font-size:13px;border:1px solid var(--ctlB);background:var(--input);color:var(--fg);min-width:0">
+<button onClick="{{ onAddContact }}" style="height:38px;padding:0 20px;border-radius:999px;border:0;background:var(--acc);color:var(--onAcc);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">Add contact</button>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+<div style="display:flex;gap:6px"><sc-for list="{{ cFilters }}" as="f" hint-placeholder-count="3"><button onClick="{{ f.onClick }}" style="padding:7px 14px;border-radius:999px;border:1px solid {{ f.border }};background:{{ f.bg }};color:{{ f.fg }};font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">{{ f.label }} <span style="opacity:.6">{{ f.count }}</span></button></sc-for></div>
+<input placeholder="Search name, company, notes" value="{{ cSearch }}" onChange="{{ onCSearch }}" style="width:260px;max-width:100%;height:34px;padding:0 14px;border-radius:999px;font-size:13px;border:1px solid var(--ctlB);background:var(--input);color:var(--fg)">
+</div>
+<div style="border-radius:24px;background:var(--card);border:1px solid var(--cardB);overflow-x:auto">
+<div style="min-width:780px">
+<div style="display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) 92px 128px minmax(0,2fr) 32px;gap:14px;padding:14px 22px;font-size:11px;letter-spacing:.12em;color:var(--mute);border-bottom:1px solid var(--line)"><div>NAME</div><div>COMPANY</div><div>DATE</div><div>STATUS</div><div>NOTES</div><div></div></div>
+<sc-for list="{{ contacts }}" as="c" hint-placeholder-count="3">
+<div style="display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) 92px 128px minmax(0,2fr) 32px;gap:14px;padding:10px 22px;align-items:center;border-bottom:1px solid var(--line)">
+<div style="font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</div>
+<div style="font-size:14px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.company }}</div>
+<div style="font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums">{{ c.dateLabel }}</div>
+<button onClick="{{ c.onStatus }}" title="Toggle status" style="justify-self:start;height:30px;padding:0 12px;border-radius:999px;border:1px solid {{ c.stBorder }};background:{{ c.stBg }};color:{{ c.stFg }};font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">{{ c.statusLabel }}</button>
+<input value="{{ c.notes }}" onChange="{{ c.onNotes }}" placeholder="Add notes" style="height:32px;padding:0 10px;border-radius:10px;font-size:13px;border:1px solid transparent;background:transparent;color:var(--fg);min-width:0">
+<button onClick="{{ c.onDelete }}" title="Delete" style="border:0;background:none;color:var(--mute);font-size:16px;cursor:pointer">×</button>
+</div>
+</sc-for>
+<sc-if value="{{ contactsEmpty }}"><div style="padding:36px 22px;font-size:14px;color:var(--mute)">{{ contactsEmptyText }}</div></sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isGoals }}">
+<header style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;color:var(--mute)">Long-term targets, broken into milestones</div><div style="font-family:Archivo;font-stretch:125%;font-weight:400;font-size:38px;letter-spacing:-.01em;line-height:1">Goals</div></div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<input placeholder="New goal" value="{{ gTitle }}" onChange="{{ onGTitle }}" onKeyDown="{{ onGKey }}" style="width:220px;height:38px;padding:0 14px;border-radius:999px;font-size:13px;border:1px solid var(--ctlB);background:var(--input);color:var(--fg)">
+<input placeholder="Target (e.g. May 2027)" value="{{ gDue }}" onChange="{{ onGDue }}" onKeyDown="{{ onGKey }}" style="width:170px;height:38px;padding:0 14px;border-radius:999px;font-size:13px;border:1px solid var(--ctlB);background:var(--input);color:var(--fg)">
+<button onClick="{{ onAddGoal }}" style="height:38px;padding:0 18px;border-radius:999px;border:0;background:var(--acc);color:var(--onAcc);font-size:13px;font-weight:600;cursor:pointer">Add goal</button>
+</div>
+</header>
+<sc-for list="{{ goals }}" as="g" hint-placeholder-count="1">
+<div style="padding:24px 26px;border-radius:24px;background:var(--card);border:1px solid var(--cardB);display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px">
+<div style="display:flex;align-items:center;gap:16px">
+<div style="position:relative;width:54px;height:54px;flex:none"><svg width="54" height="54" viewBox="0 0 48 48" style="transform:rotate(-90deg)"><circle cx="24" cy="24" r="20" style="fill:none;stroke:var(--track);stroke-width:3.5"></circle><circle cx="24" cy="24" r="20" style="fill:none;stroke:var(--acc);stroke-width:3.5;stroke-linecap:round;stroke-dasharray:{{ g.dash }};opacity:{{ g.ringOp }};transition:all .4s"></circle></svg><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">{{ g.pct }}</div></div>
+<div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:Archivo;font-stretch:125%;font-weight:400;font-size:24px;line-height:1.1">{{ g.title }}</div><div style="font-size:13px;color:var(--mute)">{{ g.meta }}</div></div>
+</div>
+<button onClick="{{ g.onDelete }}" style="border:1px solid var(--ctlB);background:transparent;color:var(--mute);height:32px;padding:0 14px;border-radius:999px;font-size:12px;cursor:pointer">Delete</button>
+</div>
+<sc-if value="{{ g.isFunnel }}">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="font-size:11px;letter-spacing:.14em;color:var(--mute)">PIPELINE</div>
+<sc-for list="{{ g.stages }}" as="st">
+<div style="display:grid;grid-template-columns:150px minmax(0,1fr) 70px 64px 92px;gap:14px;align-items:center;padding:6px 0">
+<div style="display:flex;flex-direction:column;gap:2px"><div style="font-size:14px;font-weight:500">{{ st.label }}</div><div style="font-size:11px;color:var(--mute)">{{ st.source }}</div></div>
+<div style="height:30px;border-radius:999px;background:var(--track);overflow:hidden"><div style="height:100%;width:{{ st.w }};border-radius:999px;background:{{ st.bg }};transition:width .4s"></div></div>
+<div style="font-family:Archivo;font-stretch:125%;font-weight:300;font-size:26px;line-height:1;text-align:right;font-variant-numeric:tabular-nums">{{ st.count }}</div>
+<div style="font-size:12px;color:var(--mute);text-align:right">{{ st.conv }}</div>
+<div style="display:flex;gap:4px;justify-content:flex-end">
+<sc-if value="{{ st.manual }}"><button onClick="{{ st.onMinus }}" style="width:32px;height:32px;border-radius:50%;border:1px solid var(--ctlB);background:var(--ctl);color:var(--fg);font-size:15px;cursor:pointer">−</button><button onClick="{{ st.onPlus }}" style="width:32px;height:32px;border-radius:50%;border:0;background:var(--acc);color:var(--onAcc);font-size:15px;cursor:pointer">+</button></sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+<div style="display:flex;flex-direction:column;gap:4px">
+<div style="font-size:11px;letter-spacing:.14em;color:var(--mute);margin-bottom:6px">MILESTONES</div>
+<sc-for list="{{ g.milestones }}" as="m">
+<div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-top:1px solid var(--line)">
+<button onClick="{{ m.onToggle }}" style="width:20px;height:20px;flex:none;border-radius:50%;border:1.5px solid {{ m.boxBorder }};background:{{ m.box }};color:var(--onAcc);font-size:11px;font-weight:700;line-height:1;padding:0;cursor:pointer">{{ m.mark }}</button>
+<div style="flex:1;font-size:14px;color:{{ m.fg }};text-decoration:{{ m.deco }}">{{ m.text }}</div>
+<div style="font-size:12px;color:var(--mute)">{{ m.doneLabel }}</div>
+<button onClick="{{ m.onDelete }}" style="border:0;background:none;color:var(--mute);font-size:16px;cursor:pointer">×</button>
+</div>
+</sc-for>
+<div style="display:flex;gap:6px;padding-top:10px;border-top:1px solid var(--line)">
+<input placeholder="Add a milestone…" value="{{ g.draft }}" onChange="{{ g.onDraft }}" onKeyDown="{{ g.onDraftKey }}" style="flex:1;min-width:0;height:36px;padding:0 14px;border-radius:999px;font-size:13px;border:1px solid var(--ctlB);background:var(--input);color:var(--fg)">
+<button onClick="{{ g.onAddMs }}" style="height:36px;padding:0 16px;border-radius:999px;border:0;background:var(--strong);color:var(--onStrong);font-size:13px;font-weight:600;cursor:pointer">Add</button>
+</div>
+</div>
+</div>
+</sc-for>
+<sc-if value="{{ goalsEmpty }}"><div style="padding:36px 26px;border-radius:24px;border:1px dashed var(--ctlB);font-size:14px;color:var(--mute)">No goals yet. Add one above.</div></sc-if>
+</sc-if>
+
+<sc-if value="{{ isWeekly }}">
+<header style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;color:var(--mute)">Week by week, Monday to Sunday</div><div style="font-family:Archivo;font-stretch:125%;font-weight:400;font-size:38px;letter-spacing:-.01em;line-height:1">Weekly Results</div></header>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(500px,1fr));gap:14px">
+<sc-for list="{{ weeks }}" as="w" hint-placeholder-count="2">
+<div style="padding:22px 24px;border-radius:24px;background:{{ w.bg }};border:1px solid {{ w.border }};color:{{ w.fg }};display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px">
+<div style="display:flex;flex-direction:column;gap:4px"><div style="display:flex;align-items:center;gap:8px"><div style="font-family:Archivo;font-stretch:125%;font-weight:400;font-size:20px">{{ w.title }}</div><sc-if value="{{ w.current }}"><span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:999px;background:var(--acc);color:var(--onAcc)">In progress</span></sc-if></div><div style="font-size:13px;color:{{ w.mute }}">{{ w.range }}</div></div>
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><div style="font-family:Archivo;font-stretch:125%;font-weight:300;font-size:32px;line-height:1">{{ w.score }}</div><div style="font-size:11px;letter-spacing:.1em;color:{{ w.mute }}">SCORE</div></div>
+</div>
+<div style="display:flex;flex-direction:column">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) repeat(7,20px) 40px 82px;gap:8px;align-items:center;padding:0 0 8px;font-size:11px;color:{{ w.mute }}"><div></div><div style="text-align:center">M</div><div style="text-align:center">T</div><div style="text-align:center">W</div><div style="text-align:center">T</div><div style="text-align:center">F</div><div style="text-align:center">S</div><div style="text-align:center">S</div><div style="text-align:right">Done</div><div></div></div>
+<sc-for list="{{ w.rows }}" as="r">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) repeat(7,20px) 40px 82px;gap:8px;align-items:center;padding:6px 0;border-top:1px solid {{ w.line }}">
+<div style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</div>
+<sc-for list="{{ r.cells }}" as="c"><div title="{{ c.title }}" style="width:16px;height:16px;justify-self:center;border-radius:50%;box-sizing:border-box;background:{{ c.bg }};border:1.5px solid {{ c.border }}"></div></sc-for>
+<div style="font-size:13px;text-align:right;font-variant-numeric:tabular-nums">{{ r.count }}</div>
+<div style="display:flex;justify-content:flex-end"><sc-if value="{{ r.hasBadge }}"><span style="font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:{{ r.badgeBg }};color:{{ r.badgeFg }};border:1px solid {{ r.badgeBorder }}">{{ r.badge }}</span></sc-if></div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+<sc-if value="{{ moreWeeks }}"><button onClick="{{ onMoreWeeks }}" style="align-self:center;height:38px;padding:0 20px;border-radius:999px;border:1px solid var(--ctlB);background:var(--ctl);color:var(--fg);font-size:13px;cursor:pointer">Show older weeks</button></sc-if>
+</sc-if>
+
+</div>
+</main>
+</div>
+</div>
+</div>
+</template>
+<script type="text/x-dc" data-dc-script>
+const KEY='splits.v1';
+const HABITS=[{key:'sleep',name:'Sleep',rule:'≥ 8 hours'},{key:'eat',name:'Eat healthy',rule:'Check'},{key:'spend',name:'No unnecessary spending',rule:'Check'},{key:'net',name:'Networking',rule:'≥ 1 new outreach'},{key:'news',name:'News',rule:'Read or listen'},{key:'reading',name:'Reading',rule:'Check'},{key:'workout',name:'Workout',rule:'5 per week'}];
+const TAGS={work:{label:'Work',color:'oklch(0.7 0.11 250)'},school:{label:'School',color:'oklch(0.7 0.11 155)'},personal:{label:'Personal',color:'oklch(0.7 0.11 340)'},other:{label:'Other',color:'oklch(0.7 0.02 260)'}};
+const LIGHT={'--bg':'#E8E1D5','--glow1':'#F6F0E6','--glow2':'#DCD2C2','--fg':'#24211D','--mute':'#6E675D','--card':'rgba(255,255,255,.42)','--cardB':'rgba(36,33,29,.07)','--line':'rgba(36,33,29,.08)','--ctl':'rgba(255,255,255,.55)','--ctlB':'rgba(36,33,29,.16)','--input':'rgba(255,255,255,.7)','--select':'#F6F1E9','--track':'rgba(36,33,29,.09)','--heatMiss':'rgba(36,33,29,.28)','--past':'rgba(36,33,29,.72)','--acc':'oklch(0.52 0.1 48)','--onAcc':'#FBF7F0','--miss':'oklch(0.55 0.15 28)','--rowOn':'rgba(255,255,255,.62)','--heroBg':'#24211D','--heroB':'#24211D','--heroFg':'#F3EEE5','--heroMute':'rgba(243,238,229,.62)','--heroAcc':'oklch(0.75 0.1 60)','--heroTrack':'rgba(243,238,229,.12)','--navOnBg':'#24211D','--navOnFg':'#F3EEE5','--navDot':'oklch(0.75 0.1 60)','--strong':'#24211D','--onStrong':'#F3EEE5'};
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYL=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const pad=n=>String(n).padStart(2,'0');
+const toKey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parse=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d);};
+const todayKey=()=>toKey(new Date());
+const addDays=(k,n)=>{const d=parse(k);d.setDate(d.getDate()+n);return toKey(d);};
+const weekStart=k=>{const d=parse(k);d.setDate(d.getDate()-(d.getDay()+6)%7);return toKey(d);};
+const fmtShort=k=>{const d=parse(k);return MON[d.getMonth()]+' '+d.getDate();};
+const isoWeek=k=>{const d=parse(k);d.setDate(d.getDate()+3-(d.getDay()+6)%7);const w1=new Date(d.getFullYear(),0,4);return 1+Math.round(((d-w1)/864e5-3+(w1.getDay()+6)%7)/7);};
+const uid=()=>Math.random().toString(36).slice(2,10);
+const pct=v=>Math.round(v*100)+'%';
+const defaults=()=>({logs:{},contacts:[],tasks:[],goals:[{id:'internship',title:'Summer 2027 Internship',due:'Summer 2027',funnel:true,apps:0,interviews:0,offers:0,milestones:[]}],theme:'dark'});
+const load=()=>{let d=defaults();try{const r=localStorage.getItem(KEY);if(r)d={...d,...JSON.parse(r)};}catch(e){}return d;};
+const T0=todayKey();
+class Component extends DCLogic {
+  state={data:load(),tab:'today',vd:T0,netName:'',netCo:'',netOpen:false,filter:'all',newText:'',newTag:'school',cName:'',cCo:'',cDate:T0,cStatus:'reached',cNotes:'',cFilter:'all',cSearch:'',ms:{},gTitle:'',gDue:'',weeksShown:6};
+  componentDidMount(){this.syncBody();}
+  componentDidUpdate(pp,ps){if(ps.data!==this.state.data){try{localStorage.setItem(KEY,JSON.stringify(this.state.data));}catch(e){}}this.syncBody();}
+  syncBody(){const light=this.state.data.theme==='light';document.body.style.background=light?'#E8E1D5':'#131418';document.documentElement.style.colorScheme=light?'light':'dark';}
+  upd=fn=>this.setState(s=>({data:fn(s.data)}));
+  setLog=(k,patch)=>this.upd(d=>({...d,logs:{...d.logs,[k]:{...(d.logs[k]||{}),...patch}}}));
+  updGoal=(id,fn)=>this.upd(d=>({...d,goals:d.goals.map(g=>g.id===id?fn(g):g)}));
+  updContact=(id,patch)=>this.upd(d=>({...d,contacts:d.contacts.map(c=>c.id===id?{...c,...patch}:c)}));
+  addOutreach=()=>{const {netName,netCo,vd}=this.state;if(!netName.trim())return;const c={id:uid(),ts:Date.now(),name:netName.trim(),company:netCo.trim(),date:vd,status:'reached',notes:''};this.setState(s=>({data:{...s.data,contacts:[...s.data.contacts,c]},netName:'',netCo:''}));};
+  addContact=()=>{const s=this.state;if(!s.cName.trim())return;const c={id:uid(),ts:Date.now(),name:s.cName.trim(),company:s.cCo.trim(),date:s.cDate||todayKey(),status:s.cStatus,notes:s.cNotes.trim()};this.setState(st=>({data:{...st.data,contacts:[...st.data.contacts,c]},cName:'',cCo:'',cNotes:''}));};
+  addTask=()=>{const t=this.state.newText.trim();if(!t)return;this.setState(s=>({data:{...s.data,tasks:[...s.data.tasks,{id:uid(),text:t,tag:s.newTag,done:false,created:todayKey()}]},newText:''}));};
+  addGoal=()=>{const t=this.state.gTitle.trim();if(!t)return;this.setState(s=>({data:{...s.data,goals:[...s.data.goals,{id:uid(),title:t,due:s.gDue.trim(),funnel:false,milestones:[]}]},gTitle:'',gDue:''}));};
+  addMs=id=>{const t=(this.state.ms[id]||'').trim();if(!t)return;this.updGoal(id,g=>({...g,milestones:[...g.milestones,{id:uid(),text:t,done:false}]}));this.setState(s=>({ms:{...s.ms,[id]:''}}));};
+  renderVals(){
+    const s=this.state,d=s.data,T=todayKey(),vd=s.vd>T?T:s.vd,light=d.theme==='light';
+    const net={};d.contacts.forEach(c=>{net[c.date]=(net[c.date]||0)+1;});
+    const logKeys=Object.keys(d.logs).filter(k=>Object.values(d.logs[k]||{}).some(v=>v===true||(typeof v==='string'&&v!=='')));
+    const allKeys=[...logKeys,...Object.keys(net)];
+    const hasData=allKeys.length>0;
+    const first=hasData?allKeys.reduce((a,b)=>a<b?a:b):T;
+    const sleepV=k=>{const v=parseFloat((d.logs[k]||{}).sleep);return isNaN(v)?null:v;};
+    const succ=(h,k)=>h==='sleep'?(sleepV(k)!==null&&sleepV(k)>=8):h==='net'?!!net[k]:!!(d.logs[k]||{})[h];
+    const miss=(h,k)=>h==='sleep'&&sleepV(k)!==null&&sleepV(k)<8;
+    const wkCount=ws=>{let n=0;for(let i=0;i<7;i++)if(succ('workout',addDays(ws,i)))n++;return n;};
+    const fw=weekStart(first);
+    const curStreak=(h,a)=>{if(h==='workout'){let ws=weekStart(a);if(wkCount(ws)<5)ws=addDays(ws,-7);let n=0;while(ws>=fw&&wkCount(ws)>=5){n++;ws=addDays(ws,-7);}return n;}let k=a;if(!succ(h,k))k=addDays(k,-1);let n=0;while(k>=first&&succ(h,k)){n++;k=addDays(k,-1);}return n;};
+    const longestMap={};HABITS.forEach(h=>{let best=0,run=0;if(h.key==='workout'){for(let ws=fw;ws<=weekStart(T);ws=addDays(ws,7)){run=wkCount(ws)>=5?run+1:0;if(run>best)best=run;}}else{for(let k=first;k<=T;k=addDays(k,1)){run=succ(h.key,k)?run+1:0;if(run>best)best=run;}}longestMap[h.key]=best;});
+    const dayScore=k=>HABITS.filter(h=>succ(h.key,k)).length/7;
+    const avgScore=(a,b)=>{let sum=0,n=0;for(let k=a<first?first:a;k<=b&&k<=T;k=addDays(k,1)){sum+=dayScore(k);n++;}return n?sum/n:null;};
+    const C=2*Math.PI*20,SC=2*Math.PI*74;
+    // Today
+    const habits=HABITS.map(h=>{
+      const isW=h.key==='workout',done=succ(h.key,vd),m=miss(h.key,vd);
+      const cur=curStreak(h.key,vd),pr=Math.max(longestMap[h.key],cur);
+      const wc=isW?wkCount(weekStart(vd)):0;
+      const frac=isW?Math.min(1,wc/5):(pr?cur/pr:0);
+      const atPR=cur>0&&cur>=pr;
+      return {key:h.key,name:h.name,cur,done,
+        sub:h.rule+' · '+cur+(isW?' wk':' day')+' streak',
+        ringTitle:isW?'Week streak':'Day streak · ring fills toward PR',
+        isToggle:h.key!=='sleep'&&h.key!=='net',isSleep:h.key==='sleep',isNet:h.key==='net',showNetForm:h.key==='net'&&s.netOpen,
+        rowBg:done?'var(--rowOn)':'transparent',ring:done?'var(--acc)':'var(--past)',dash:(frac*C).toFixed(1)+' '+C.toFixed(1),ringOp:frac>0?1:0,
+        prLabel:pr===0?'PR —':atPR?'PR ▲':'PR '+pr,prFg:atPR?'var(--acc)':'var(--mute)',
+        btnBg:done?'var(--acc)':'var(--ctl)',btnFg:done?'var(--onAcc)':'var(--fg)',btnBorder:done?'var(--acc)':'var(--ctlB)',btnLabel:done?'✓ Done':'Log',
+        inBg:done?'var(--acc)':'var(--ctl)',inFg:done?'var(--onAcc)':'var(--fg)',inBorder:m?'var(--miss)':done?'var(--acc)':'var(--ctlB)',
+        weekLabel:isW?wc+'/5 wk':'',netCount:net[vd]?net[vd]+' logged':'',
+        days:[6,5,4,3,2,1,0].map(o=>{const k=addDays(vd,-o),ok=succ(h.key,k),mm=miss(h.key,k),last=o===0;return {title:fmtShort(k),bg:ok?(last?'var(--acc)':'var(--past)'):mm?'transparent':'var(--track)',border:mm?'var(--miss)':(last&&!ok?'var(--mute)':'transparent')};}),
+        onToggle:()=>this.setLog(vd,{[h.key]:!done})};
+    });
+    const doneCount=habits.filter(h=>h.done).length,left=7-doneCount;
+    const vdD=parse(vd);
+    // Tasks
+    const live=d.tasks.filter(t=>!t.done||t.doneOn===T);
+    const filters=[{key:'all',label:'All',color:'var(--fg)'},...Object.keys(TAGS).map(k=>({key:k,label:TAGS[k].label,color:TAGS[k].color}))].map(f=>{const a=s.filter===f.key;return {...f,count:f.key==='all'?live.length:live.filter(t=>t.tag===f.key).length,bg:a?'var(--fg)':'transparent',fg:a?'var(--bg)':'var(--fg)',border:a?'var(--fg)':'var(--ctlB)',color:a&&f.key==='all'?'var(--bg)':f.color,onClick:()=>this.setState({filter:f.key})};});
+    const visibleTasks=live.filter(t=>s.filter==='all'||t.tag===s.filter).sort((a,b)=>a.done-b.done).map(t=>({...t,tagLabel:TAGS[t.tag].label.toUpperCase(),color:TAGS[t.tag].color,box:t.done?'var(--acc)':'transparent',boxBorder:t.done?'var(--acc)':'var(--ctlB)',mark:t.done?'✓':'',fg:t.done?'var(--mute)':'var(--fg)',deco:t.done?'line-through':'none',
+      onToggle:()=>this.upd(dd=>({...dd,tasks:dd.tasks.map(x=>x.id===t.id?{...x,done:!x.done,doneOn:!x.done?todayKey():null}:x)})),onRemove:()=>this.upd(dd=>({...dd,tasks:dd.tasks.filter(x=>x.id!==t.id)}))}));
+    // Consistency
+    const c30=hasData?avgScore(addDays(T,-29),T):null;
+    const spark=[];for(let i=13;i>=0;i--){const k=addDays(T,-i),v=k<first?0:dayScore(k);spark.push({h:Math.max(4,v*100)+'%',bg:i===0?'var(--acc)':'var(--heatMiss)',title:fmtShort(k)+' · '+Math.round(v*7)+'/7'});}
+    // Trends
+    const W=[];for(let i=11;i>=0;i--)W.push(addDays(weekStart(T),-7*i));
+    const inRange=ws=>addDays(ws,6)>=first&&hasData;
+    const cnt=(h,ws)=>{let n=0;for(let i=0;i<7;i++)if(succ(h,addDays(ws,i)))n++;return n;};
+    const chart=(vals,max,target,fmt,title,sub,tl)=>{const X=i=>(12+i*(296/11)).toFixed(1),Y=v=>(108-Math.min(v,max)/max*96).toFixed(1);const pts=vals.map((v,i)=>v==null?null:{cx:X(i),cy:Y(v)}).filter(Boolean);const lv=[...vals].reverse().find(v=>v!=null);return {title,sub,targetLabel:tl,points:pts.map(p=>p.cx+','+p.cy).join(' '),dots:pts,targetY:Y(target),latest:lv==null?'—':fmt(lv)};};
+    const sleepAvg=W.map(ws=>{let sum=0,n=0;for(let j=0;j<7;j++){const v=sleepV(addDays(ws,j));if(v!==null){sum+=v;n++;}}return n?sum/n:null;});
+    const charts=[chart(sleepAvg,10,8,v=>v.toFixed(1)+'h','Sleep','Average hours per night','— 8h target'),
+      chart(W.map(ws=>inRange(ws)?cnt('reading',ws):null),7,7,v=>v+'/7','Reading','Days per week','— 7/7'),
+      chart(W.map(ws=>inRange(ws)?wkCount(ws):null),7,5,v=>v+'/7','Workout','Sessions per week','— 5 target')];
+    const W26=[];for(let i=25;i>=0;i--)W26.push(addDays(weekStart(T),-7*i));
+    const wkScores=W26.map(ws=>inRange(ws)?avgScore(ws,addDays(ws,6)):null);
+    const best=wkScores.filter(v=>v!=null).reduce((a,b)=>Math.max(a,b),-1);
+    const consistBars=W26.map((ws,i)=>{const v=wkScores[i];return {h:v==null?'0%':Math.max(2,v*100)+'%',bg:i===25?'var(--acc)':(v!=null&&v===best?'var(--past)':'var(--heatMiss)'),label:i===25&&v!=null?pct(v):'',title:'Week of '+fmtShort(ws)+(v==null?' · no data':' · '+pct(v))};});
+    const hs=addDays(weekStart(T),-52*7);
+    let pm=-1;const heatMonths=[];for(let c=0;c<53;c++){const m=parse(addDays(hs,c*7)).getMonth();heatMonths.push({label:m!==pm?MON[m]:''});pm=m;}
+    const heat=HABITS.map(h=>{let total=0;const cols=[];for(let c=0;c<53;c++){const cells=[];for(let r=0;r<7;r++){const k=addDays(hs,c*7+r);if(k>T){cells.push({bg:'transparent',title:''});continue;}const ok=succ(h.key,k);if(ok)total++;cells.push({bg:ok?'var(--acc)':miss(h.key,k)?'var(--heatMiss)':'var(--track)',title:fmtShort(k)+(ok?' · done':'')});}cols.push({cells});}
+      const cur=curStreak(h.key,T),isW=h.key==='workout';return {name:h.name,cols,total:total+' successful days',streaks:'Current '+cur+(isW?' wk':' d')+' · PR '+Math.max(longestMap[h.key],cur)+(isW?' wk':' d')};});
+    const board=HABITS.map(h=>{const isW=h.key==='workout',cur=curStreak(h.key,T),pr=Math.max(longestMap[h.key],cur),atPR=cur>0&&cur>=pr;return {name:h.name,cur,unit:isW?'wk':'d',prLabel:atPR?'AT PR ▲':'PR '+pr,prUnit:isW?'weeks':'days',prFg:atPR?'var(--heroAcc)':'var(--heroFg)'};});
+    // Networking
+    const q=s.cSearch.trim().toLowerCase();
+    const sorted=[...d.contacts].sort((a,b)=>b.date.localeCompare(a.date)||(b.ts||0)-(a.ts||0));
+    const contacts=sorted.filter(c=>s.cFilter==='all'||c.status===s.cFilter).filter(c=>!q||(c.name+' '+c.company+' '+c.notes).toLowerCase().includes(q)).map(c=>{const ch=c.status==='chatted';const dt=parse(c.date);return {...c,company:c.company||'—',dateLabel:fmtShort(c.date)+(dt.getFullYear()!==parse(T).getFullYear()?' '+dt.getFullYear():''),statusLabel:ch?'Chatted':'Reached out',stBg:ch?'var(--acc)':'var(--ctl)',stFg:ch?'var(--onAcc)':'var(--fg)',stBorder:ch?'var(--acc)':'var(--ctlB)',
+      onStatus:()=>this.updContact(c.id,{status:ch?'reached':'chatted'}),onNotes:e=>this.updContact(c.id,{notes:e.target.value}),onDelete:()=>this.upd(dd=>({...dd,contacts:dd.contacts.filter(x=>x.id!==c.id)}))};});
+    const chatted=d.contacts.filter(c=>c.status==='chatted').length;
+    const cFilters=[['all','All',d.contacts.length],['reached','Reached out',d.contacts.length-chatted],['chatted','Chatted',chatted]].map(([k,l,n])=>{const a=s.cFilter===k;return {label:l,count:n,bg:a?'var(--fg)':'transparent',fg:a?'var(--bg)':'var(--fg)',border:a?'var(--fg)':'var(--ctlB)',onClick:()=>this.setState({cFilter:k})};});
+    // Goals
+    const goals=d.goals.map(g=>{const ms=g.milestones||[],md=ms.filter(m=>m.done).length,frac=ms.length?md/ms.length:0;
+      let stages=[];if(g.funnel){const raw=[{label:'Outreaches',count:d.contacts.length,source:'From Networking'},{label:'Coffee chats',count:chatted,source:'Status: Chatted'},{label:'Applications',count:g.apps||0,field:'apps',source:'Manual'},{label:'Interviews',count:g.interviews||0,field:'interviews',source:'Manual'},{label:'Offers',count:g.offers||0,field:'offers',source:'Manual'}];const mx=Math.max(1,...raw.map(r=>r.count));
+        stages=raw.map((r,i)=>({...r,manual:!!r.field,w:(r.count?Math.max(3,r.count/mx*100):0)+'%',bg:i===raw.length-1?'var(--acc)':'var(--past)',conv:i===0?'':(raw[i-1].count?Math.round(r.count/raw[i-1].count*100)+'% conv':'—'),
+          onMinus:()=>this.updGoal(g.id,x=>({...x,[r.field]:Math.max(0,(x[r.field]||0)-1)})),onPlus:()=>this.updGoal(g.id,x=>({...x,[r.field]:(x[r.field]||0)+1}))}));}
+      return {id:g.id,title:g.title,isFunnel:!!g.funnel,stages,meta:[g.due?'Target · '+g.due:'',ms.length?md+' of '+ms.length+' milestones':'No milestones yet'].filter(Boolean).join('  ·  '),
+        pct:Math.round(frac*100)+'%',dash:(frac*C).toFixed(1)+' '+C.toFixed(1),ringOp:frac>0?1:0,draft:s.ms[g.id]||'',
+        onDraft:e=>{const v=e.target.value;this.setState(st=>({ms:{...st.ms,[g.id]:v}}));},onDraftKey:e=>{if(e.key==='Enter')this.addMs(g.id);},onAddMs:()=>this.addMs(g.id),
+        onDelete:()=>{if(confirm('Delete "'+g.title+'"?'))this.upd(dd=>({...dd,goals:dd.goals.filter(x=>x.id!==g.id)}));},
+        milestones:ms.map(m=>({...m,box:m.done?'var(--acc)':'transparent',boxBorder:m.done?'var(--acc)':'var(--ctlB)',mark:m.done?'✓':'',fg:m.done?'var(--mute)':'var(--fg)',deco:m.done?'line-through':'none',doneLabel:m.done&&m.doneOn?fmtShort(m.doneOn):'',
+          onToggle:()=>this.updGoal(g.id,x=>({...x,milestones:x.milestones.map(y=>y.id===m.id?{...y,done:!y.done,doneOn:!y.done?todayKey():null}:y)})),onDelete:()=>this.updGoal(g.id,x=>({...x,milestones:x.milestones.filter(y=>y.id!==m.id)}))}))};});
+    // Weekly
+    const weeks=[];let ws=weekStart(T);while(weeks.length<s.weeksShown&&(ws>=fw||weeks.length===0)){const w0=ws,cur=w0===weekStart(T),sc=avgScore(w0,addDays(w0,6));
+      weeks.push({title:'Week '+isoWeek(w0),range:fmtShort(w0)+' – '+fmtShort(addDays(w0,6)),current:cur,score:sc==null?'—':pct(sc),
+        bg:cur?'var(--heroBg)':'var(--card)',border:cur?'var(--heroB)':'var(--cardB)',fg:cur?'var(--heroFg)':'var(--fg)',mute:cur?'var(--heroMute)':'var(--mute)',line:cur?'var(--heroTrack)':'var(--line)',
+        rows:HABITS.map(h=>{let n=0;const cells=[0,1,2,3,4,5,6].map(i=>{const k=addDays(w0,i);if(k>T)return {bg:'transparent',border:cur?'var(--heroTrack)':'var(--line)',title:fmtShort(k)};const ok=succ(h.key,k);if(ok)n++;return {bg:ok?'var(--acc)':cur?'var(--heroTrack)':'var(--track)',border:miss(h.key,k)?'var(--miss)':'transparent',title:fmtShort(k)};});
+          let badge='',kind='';if(h.key==='workout'){badge=n>=5?'Hit':cur?'':'Missed';kind=n>=5?'win':'miss';}else if(n===7){badge='Perfect';kind='win';}
+          return {name:h.name,cells,count:n+'/7',hasBadge:!!badge,badge,badgeBg:kind==='win'?'var(--acc)':'transparent',badgeFg:kind==='win'?'var(--onAcc)':'var(--miss)',badgeBorder:kind==='win'?'var(--acc)':'var(--miss)'};})});ws=addDays(ws,-7);}
+    const tabs=[['today','Today'],['trends','Trends'],['net','Networking'],['goals','Goals'],['weekly','Weekly Results']];
+    return {
+      themeVars:light?LIGHT:{},toggleTheme:()=>this.upd(dd=>({...dd,theme:dd.theme==='light'?'dark':'light'})),
+      switchBg:light?'var(--acc)':'var(--ctlB)',knobLeft:light?'18px':'2px',knobBg:light?'var(--onAcc)':'var(--fg)',
+      nav:tabs.map(([k,l])=>{const a=s.tab===k;return {label:l,bg:a?'var(--navOnBg)':'transparent',fg:a?'var(--navOnFg)':'var(--mute)',dot:a?'var(--navDot)':'transparent',weight:a?500:400,onClick:()=>this.setState({tab:k})};}),
+      isToday:s.tab==='today',isTrends:s.tab==='trends',isNet:s.tab==='net',isGoals:s.tab==='goals',isWeekly:s.tab==='weekly',
+      consistency30:c30==null?'—':Math.round(c30*100),consistencyUnit:c30==null?'':'%',spark,
+      dateLine:DAYL[vdD.getDay()]+', '+MONL[vdD.getMonth()]+' '+vdD.getDate()+' · Week '+isoWeek(vd),
+      vdLabel:vd===T?'Today':vd===addDays(T,-1)?'Yesterday':DAYL[vdD.getDay()],notToday:vd!==T,nextOpacity:vd<T?1:.35,
+      onPrevDay:()=>this.setState(st=>({vd:addDays(st.vd,-1)})),onNextDay:()=>this.setState(st=>({vd:st.vd<todayKey()?addDays(st.vd,1):st.vd})),onToday:()=>this.setState({vd:todayKey()}),
+      leftText:left===0?'All seven logged. Clean day.':left+(left===1?' habit':' habits')+' left',
+      habits,doneCount,scoreOp:doneCount?1:0,scoreDash:(doneCount/7*SC).toFixed(1)+' '+SC.toFixed(1),
+      liveStreaks:habits.filter(h=>h.cur>0).length,topStreak:Math.max(0,...habits.filter(h=>h.key!=='workout').map(h=>h.cur)),
+      prsOnLine:habits.filter(h=>!h.done&&h.key!=='workout'&&h.cur>0&&h.cur>=Math.max(longestMap[h.key],h.cur)-1).length,
+      sleepRaw:(d.logs[vd]||{}).sleep??'',onSleep:e=>this.setLog(vd,{sleep:e.target.value}),
+      outreachToday:d.contacts.filter(c=>c.date===vd).map(c=>({name:c.name,company:c.company})),netName:s.netName,netCo:s.netCo,
+      onNetName:e=>this.setState({netName:e.target.value}),onNetCo:e=>this.setState({netCo:e.target.value}),onNetKey:e=>{if(e.key==='Enter')this.addOutreach();},onAddOutreach:this.addOutreach,toggleNetForm:()=>this.setState(st=>({netOpen:!st.netOpen})),
+      filters,visibleTasks,tasksEmpty:visibleTasks.length===0,taskDone:live.filter(t=>t.done).length,taskTotal:live.length,hasCompleted:d.tasks.some(t=>t.done),
+      onClearDone:()=>this.upd(dd=>({...dd,tasks:dd.tasks.filter(t=>!t.done)})),
+      newText:s.newText,newTag:s.newTag,onNewText:e=>this.setState({newText:e.target.value}),onNewTag:e=>this.setState({newTag:e.target.value}),onNewKey:e=>{if(e.key==='Enter')this.addTask();},onAddTask:this.addTask,
+      board,charts,weekAxisStart:fmtShort(W[0]),consistBars,consistAxisStart:fmtShort(W26[0]),thisWeekScore:wkScores[25]==null?'—':pct(wkScores[25]),bestWeek:best<0?'—':pct(best),heat,heatMonths,
+      netTotal:d.contacts.length,netChatted:chatted,netWeek:d.contacts.filter(c=>c.date>=weekStart(T)).length,netStreak:curStreak('net',T),
+      cName:s.cName,cCo:s.cCo,cDate:s.cDate,cStatus:s.cStatus,cNotes:s.cNotes,cSearch:s.cSearch,
+      onCName:e=>this.setState({cName:e.target.value}),onCCo:e=>this.setState({cCo:e.target.value}),onCDate:e=>this.setState({cDate:e.target.value}),onCStatus:e=>this.setState({cStatus:e.target.value}),onCNotes:e=>this.setState({cNotes:e.target.value}),onCSearch:e=>this.setState({cSearch:e.target.value}),
+      onCKey:e=>{if(e.key==='Enter')this.addContact();},onAddContact:this.addContact,cFilters,contacts,contactsEmpty:contacts.length===0,contactsEmptyText:d.contacts.length?'No contacts match.':'No outreach yet. Add your first contact above, or log one from Today.',
+      goals,goalsEmpty:goals.length===0,gTitle:s.gTitle,gDue:s.gDue,onGTitle:e=>this.setState({gTitle:e.target.value}),onGDue:e=>this.setState({gDue:e.target.value}),onGKey:e=>{if(e.key==='Enter')this.addGoal();},onAddGoal:this.addGoal,
+      weeks,moreWeeks:ws>=fw&&hasData,onMoreWeeks:()=>this.setState(st=>({weeksShown:st.weeksShown+6}))
+    };
+  }
+}
+</script>
+<script type="module">
+// Minimal runtime for the Claude Design template (replaces the missing support.js).
+import {h,render,Component,Fragment} from 'https://cdn.jsdelivr.net/npm/preact@10.24.3/dist/preact.module.js';
+const EXPR=/\{\{\s*([^}]+?)\s*\}\}/g, ONE=/^\{\{\s*([^}]+?)\s*\}\}$/;
+const lookup=(path,scope)=>{
+  if(path==='true')return true;if(path==='false')return false;
+  if(/^-?\d+(\.\d+)?$/.test(path))return Number(path);
+  let v=scope;for(const p of path.split('.'))v=v==null?v:v[p];
+  return v;
+};
+const interp=(str,scope)=>{const m=str.match(ONE);if(m)return lookup(m[1],scope);return str.replace(EXPR,(_,p)=>{const v=lookup(p,scope);return v==null?'':v;});};
+const kids=(node,scope)=>Array.from(node.childNodes,c=>build(c,scope));
+function build(node,scope){
+  if(node.nodeType===3){const t=node.nodeValue;if(!t.trim()&&t.includes('\n'))return null;const v=interp(t,scope);return v==null||v===false?null:String(v);}
+  if(node.nodeType!==1)return null;
+  const tag=node.localName;
+  if(tag==='sc-for'){
+    const list=interp(node.getAttribute('list'),scope)||[],as=node.getAttribute('as');
+    return h(Fragment,null,list.map((item,i)=>{const sc=Object.create(scope);sc[as]=item;return h(Fragment,{key:item&&item.id!=null?item.id:i},kids(node,sc));}));
+  }
+  if(tag==='sc-if')return interp(node.getAttribute('value'),scope)?h(Fragment,null,kids(node,scope)):null;
+  const props={};
+  for(const {name,value} of node.attributes){
+    if(name.startsWith('hint-'))continue;
+    // React-style onChange on text inputs fires per keystroke
+    const n=name==='onchange'&&(tag==='input'||tag==='textarea')?'oninput':name;
+    props[n]=interp(value,scope);
+  }
+  return h(tag,props,kids(node,scope));
+}
+const tpl=document.getElementById('dc-template').content;
+class DCLogic extends Component{render(){return h(Fragment,null,kids(tpl,this.renderVals()));}}
+const App=new Function('DCLogic',document.querySelector('script[data-dc-script]').textContent+'\nreturn Component;')(DCLogic);
+render(h(App),document.getElementById('app'));
+</script>
+</body>
+</html>
