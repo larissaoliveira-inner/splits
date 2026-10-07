@@ -202,14 +202,21 @@ input[type=number]::-webkit-inner-spin-button{opacity:.35}
 </div>
 <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
 <div style="display:flex;gap:6px"><sc-for list="{{ cFilters }}" as="f" hint-placeholder-count="3"><button onClick="{{ f.onClick }}" style="padding:7px 14px;border-radius:999px;border:1px solid {{ f.border }};background:{{ f.bg }};color:{{ f.fg }};font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">{{ f.label }} <span style="opacity:.6">{{ f.count }}</span></button></sc-for></div>
-<input placeholder="Search name, company, notes" value="{{ cSearch }}" onChange="{{ onCSearch }}" style="width:260px;max-width:100%;height:34px;padding:0 14px;border-radius:999px;font-size:13px;border:1px solid var(--ctlB);background:var(--input);color:var(--fg)">
+<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input placeholder="Search name, company, notes" value="{{ cSearch }}" onChange="{{ onCSearch }}" style="width:260px;max-width:100%;height:34px;padding:0 14px;border-radius:999px;font-size:13px;border:1px solid var(--ctlB);background:var(--input);color:var(--fg)"><button onClick="{{ toggleImport }}" style="height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--ctlB);background:var(--ctl);color:var(--fg);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">Import</button></div>
 </div>
+<sc-if value="{{ impOpen }}">
+<div style="padding:18px;border-radius:24px;background:var(--card);border:1px solid var(--cardB);display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;flex-direction:column;gap:4px"><div style="font-size:15px;font-weight:500">Import past outreach</div><div style="font-size:12px;color:var(--mute)">Paste rows from your spreadsheet: Name · Company · Role · LinkedIn · Reached out · Chatted · Notes. "Yes" under Chatted marks them as Chatted. Imported contacts have no date, so they don't count toward streaks.</div></div>
+<textarea value="{{ impText }}" onChange="{{ onImpText }}" rows="8" placeholder="Paste rows here" style="padding:12px 14px;border-radius:16px;font-size:12px;font-family:ui-monospace,Menlo,monospace;border:1px solid var(--ctlB);background:var(--input);color:var(--fg);resize:vertical"></textarea>
+<div style="display:flex;align-items:center;gap:12px"><button onClick="{{ onImport }}" style="height:36px;padding:0 18px;border-radius:999px;border:0;background:var(--acc);color:var(--onAcc);font-size:13px;font-weight:600;cursor:pointer">Import contacts</button><span style="font-size:12px;color:var(--mute)">{{ impMsg }}</span></div>
+</div>
+</sc-if>
 <div style="border-radius:24px;background:var(--card);border:1px solid var(--cardB);overflow-x:auto">
 <div style="min-width:780px">
 <div style="display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) 92px 128px minmax(0,2fr) 32px;gap:14px;padding:14px 22px;font-size:11px;letter-spacing:.12em;color:var(--mute);border-bottom:1px solid var(--line)"><div>NAME</div><div>COMPANY</div><div>DATE</div><div>STATUS</div><div>NOTES</div><div></div></div>
 <sc-for list="{{ contacts }}" as="c" hint-placeholder-count="3">
 <div style="display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) 92px 128px minmax(0,2fr) 32px;gap:14px;padding:10px 22px;align-items:center;border-bottom:1px solid var(--line)">
-<div style="font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</div>
+<div style="display:flex;flex-direction:column;gap:2px;min-width:0"><div style="font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><sc-if value="{{ c.linkedin }}"><a href="{{ c.linkedin }}" target="_blank" rel="noopener" title="Open LinkedIn" style="text-decoration:none">{{ c.name }} <span style="font-size:11px;color:var(--mute)">↗</span></a></sc-if><sc-if value="{{ c.noLink }}">{{ c.name }}</sc-if></div><sc-if value="{{ c.role }}"><div style="font-size:12px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.role }}</div></sc-if></div>
 <div style="font-size:14px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.company }}</div>
 <div style="font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums">{{ c.dateLabel }}</div>
 <button onClick="{{ c.onStatus }}" title="Toggle status" style="justify-self:start;height:30px;padding:0 12px;border-radius:999px;border:1px solid {{ c.stBorder }};background:{{ c.stBg }};color:{{ c.stFg }};font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">{{ c.statusLabel }}</button>
@@ -330,7 +337,7 @@ const defaults=()=>({logs:{},contacts:[],tasks:[],goals:[{id:'internship',title:
 const load=()=>{let d=defaults();try{const r=localStorage.getItem(KEY);if(r)d={...d,...JSON.parse(r)};}catch(e){}return d;};
 const T0=todayKey();
 class Component extends DCLogic {
-  state={data:load(),tab:'today',vd:T0,netName:'',netCo:'',netOpen:false,filter:'all',newText:'',newTag:'school',cName:'',cCo:'',cDate:T0,cStatus:'reached',cNotes:'',cFilter:'all',cSearch:'',ms:{},gTitle:'',gDue:'',weeksShown:6};
+  state={data:load(),tab:'today',vd:T0,netName:'',netCo:'',netOpen:false,filter:'all',newText:'',newTag:'school',cName:'',cCo:'',cDate:T0,cStatus:'reached',cNotes:'',cFilter:'all',cSearch:'',impOpen:false,impText:'',impMsg:'',ms:{},gTitle:'',gDue:'',weeksShown:6};
   componentDidMount(){this.syncBody();}
   componentDidUpdate(pp,ps){if(ps.data!==this.state.data){try{localStorage.setItem(KEY,JSON.stringify(this.state.data));}catch(e){}}this.syncBody();}
   syncBody(){const light=this.state.data.theme==='light';document.body.style.background=light?'#E8E1D5':'#131418';document.documentElement.style.colorScheme=light?'light':'dark';}
@@ -340,12 +347,17 @@ class Component extends DCLogic {
   updContact=(id,patch)=>this.upd(d=>({...d,contacts:d.contacts.map(c=>c.id===id?{...c,...patch}:c)}));
   addOutreach=()=>{const {netName,netCo,vd}=this.state;if(!netName.trim())return;const c={id:uid(),ts:Date.now(),name:netName.trim(),company:netCo.trim(),date:vd,status:'reached',notes:''};this.setState(s=>({data:{...s.data,contacts:[...s.data.contacts,c]},netName:'',netCo:''}));};
   addContact=()=>{const s=this.state;if(!s.cName.trim())return;const c={id:uid(),ts:Date.now(),name:s.cName.trim(),company:s.cCo.trim(),date:s.cDate||todayKey(),status:s.cStatus,notes:s.cNotes.trim()};this.setState(st=>({data:{...st.data,contacts:[...st.data.contacts,c]},cName:'',cCo:'',cNotes:''}));};
+  importContacts=()=>{const now=Date.now(),seen=new Set(this.state.data.contacts.map(c=>(c.name+'|'+c.company).toLowerCase())),add=[];
+    this.state.impText.split(/\r?\n/).forEach(l=>{const r=(l.includes('\t')?l.split('\t'):l.split(/\s{2,}/)).map(x=>x.trim());const [name,company='',role='',link='',,chat='',note='']=r;
+      if(!name||/^name$/i.test(name))return;const k=(name+'|'+company).toLowerCase();if(seen.has(k))return;seen.add(k);const sch=/^sched/i.test(chat);
+      add.push({id:uid(),ts:now-add.length,name,company,role,linkedin:/^https?:\/\//i.test(link)?link:'',date:'',status:/^yes/i.test(chat)?'chatted':'reached',notes:[sch?'Chat scheduled':'',note].filter(Boolean).join(' · ')});});
+    this.setState(s=>({data:{...s.data,contacts:[...s.data.contacts,...add]},impText:'',impMsg:add.length?'Added '+add.length+(add.length===1?' contact.':' contacts.'):'Nothing new to add.'}));};
   addTask=()=>{const t=this.state.newText.trim();if(!t)return;this.setState(s=>({data:{...s.data,tasks:[...s.data.tasks,{id:uid(),text:t,tag:s.newTag,done:false,created:todayKey()}]},newText:''}));};
   addGoal=()=>{const t=this.state.gTitle.trim();if(!t)return;this.setState(s=>({data:{...s.data,goals:[...s.data.goals,{id:uid(),title:t,due:s.gDue.trim(),funnel:false,milestones:[]}]},gTitle:'',gDue:''}));};
   addMs=id=>{const t=(this.state.ms[id]||'').trim();if(!t)return;this.updGoal(id,g=>({...g,milestones:[...g.milestones,{id:uid(),text:t,done:false}]}));this.setState(s=>({ms:{...s.ms,[id]:''}}));};
   renderVals(){
     const s=this.state,d=s.data,T=todayKey(),vd=s.vd>T?T:s.vd,light=d.theme==='light';
-    const net={};d.contacts.forEach(c=>{net[c.date]=(net[c.date]||0)+1;});
+    const net={};d.contacts.forEach(c=>{if(c.date)net[c.date]=(net[c.date]||0)+1;});
     const logKeys=Object.keys(d.logs).filter(k=>Object.values(d.logs[k]||{}).some(v=>v===true||(typeof v==='string'&&v!=='')));
     const allKeys=[...logKeys,...Object.keys(net)];
     const hasData=allKeys.length>0;
@@ -410,7 +422,7 @@ class Component extends DCLogic {
     // Networking
     const q=s.cSearch.trim().toLowerCase();
     const sorted=[...d.contacts].sort((a,b)=>b.date.localeCompare(a.date)||(b.ts||0)-(a.ts||0));
-    const contacts=sorted.filter(c=>s.cFilter==='all'||c.status===s.cFilter).filter(c=>!q||(c.name+' '+c.company+' '+c.notes).toLowerCase().includes(q)).map(c=>{const ch=c.status==='chatted';const dt=parse(c.date);return {...c,company:c.company||'—',dateLabel:fmtShort(c.date)+(dt.getFullYear()!==parse(T).getFullYear()?' '+dt.getFullYear():''),statusLabel:ch?'Chatted':'Reached out',stBg:ch?'var(--acc)':'var(--ctl)',stFg:ch?'var(--onAcc)':'var(--fg)',stBorder:ch?'var(--acc)':'var(--ctlB)',
+    const contacts=sorted.filter(c=>s.cFilter==='all'||c.status===s.cFilter).filter(c=>!q||(c.name+' '+c.company+' '+(c.role||'')+' '+c.notes).toLowerCase().includes(q)).map(c=>{const ch=c.status==='chatted';const dt=c.date?parse(c.date):null;return {...c,role:c.role||'',linkedin:c.linkedin||'',noLink:!c.linkedin,company:c.company||'—',dateLabel:!dt?'Earlier':fmtShort(c.date)+(dt.getFullYear()!==parse(T).getFullYear()?' '+dt.getFullYear():''),statusLabel:ch?'Chatted':'Reached out',stBg:ch?'var(--acc)':'var(--ctl)',stFg:ch?'var(--onAcc)':'var(--fg)',stBorder:ch?'var(--acc)':'var(--ctlB)',
       onStatus:()=>this.updContact(c.id,{status:ch?'reached':'chatted'}),onNotes:e=>this.updContact(c.id,{notes:e.target.value}),onDelete:()=>this.upd(dd=>({...dd,contacts:dd.contacts.filter(x=>x.id!==c.id)}))};});
     const chatted=d.contacts.filter(c=>c.status==='chatted').length;
     const cFilters=[['all','All',d.contacts.length],['reached','Reached out',d.contacts.length-chatted],['chatted','Chatted',chatted]].map(([k,l,n])=>{const a=s.cFilter===k;return {label:l,count:n,bg:a?'var(--fg)':'transparent',fg:a?'var(--bg)':'var(--fg)',border:a?'var(--fg)':'var(--ctlB)',onClick:()=>this.setState({cFilter:k})};});
@@ -456,7 +468,7 @@ class Component extends DCLogic {
       netTotal:d.contacts.length,netChatted:chatted,netWeek:d.contacts.filter(c=>c.date>=weekStart(T)).length,netStreak:curStreak('net',T),
       cName:s.cName,cCo:s.cCo,cDate:s.cDate,cStatus:s.cStatus,cNotes:s.cNotes,cSearch:s.cSearch,
       onCName:e=>this.setState({cName:e.target.value}),onCCo:e=>this.setState({cCo:e.target.value}),onCDate:e=>this.setState({cDate:e.target.value}),onCStatus:e=>this.setState({cStatus:e.target.value}),onCNotes:e=>this.setState({cNotes:e.target.value}),onCSearch:e=>this.setState({cSearch:e.target.value}),
-      onCKey:e=>{if(e.key==='Enter')this.addContact();},onAddContact:this.addContact,cFilters,contacts,contactsEmpty:contacts.length===0,contactsEmptyText:d.contacts.length?'No contacts match.':'No outreach yet. Add your first contact above, or log one from Today.',
+      onCKey:e=>{if(e.key==='Enter')this.addContact();},impOpen:s.impOpen,impText:s.impText,impMsg:s.impMsg,toggleImport:()=>this.setState(st=>({impOpen:!st.impOpen,impMsg:''})),onImpText:e=>this.setState({impText:e.target.value}),onImport:this.importContacts,onAddContact:this.addContact,cFilters,contacts,contactsEmpty:contacts.length===0,contactsEmptyText:d.contacts.length?'No contacts match.':'No outreach yet. Add your first contact above, or log one from Today.',
       goals,goalsEmpty:goals.length===0,gTitle:s.gTitle,gDue:s.gDue,onGTitle:e=>this.setState({gTitle:e.target.value}),onGDue:e=>this.setState({gDue:e.target.value}),onGKey:e=>{if(e.key==='Enter')this.addGoal();},onAddGoal:this.addGoal,
       weeks,moreWeeks:ws>=fw&&hasData,onMoreWeeks:()=>this.setState(st=>({weeksShown:st.weeksShown+6}))
     };
